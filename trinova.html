@@ -1,0 +1,1666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TriNova — ESTD 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #EDECE8;
+    --bg2: #E5E3DE;
+    --text: #1A1A1A;
+    --text2: #555;
+    --accent: #1A1A1A;
+    --border: rgba(0,0,0,0.12);
+    --card: #fff;
+    --input-bg: #fff;
+    --nav-bg: rgba(237,236,232,0.92);
+    --shadow: 0 2px 24px rgba(0,0,0,0.07);
+    --badge: #1A1A1A;
+    --badge-text: #EDECE8;
+  }
+  [data-theme="dark"] {
+    --bg: #141414;
+    --bg2: #1E1E1E;
+    --text: #EDECE8;
+    --text2: #999;
+    --accent: #EDECE8;
+    --border: rgba(255,255,255,0.1);
+    --card: #1E1E1E;
+    --input-bg: #2A2A2A;
+    --nav-bg: rgba(20,20,20,0.92);
+    --shadow: 0 2px 24px rgba(0,0,0,0.4);
+    --badge: #EDECE8;
+    --badge-text: #141414;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body {
+    font-family:'DM Sans',sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    transition:background 0.3s,color 0.3s;
+    min-height:100vh;
+  }
+
+  /* NAV */
+  nav {
+    position:fixed; top:0; left:0; right:0; z-index:1000;
+    background:var(--nav-bg);
+    backdrop-filter:blur(16px);
+    border-bottom:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 40px; height:64px;
+    transition:background 0.3s;
+  }
+  .nav-logo {
+    font-family:'Playfair Display',serif;
+    font-size:1.5rem;
+    color:var(--text);
+    text-decoration:none;
+    display:flex; align-items:baseline; gap:2px;
+    cursor:pointer;
+  }
+  .nav-logo span.italic { font-style:italic; font-weight:400; }
+  .nav-logo span.bold { font-style:normal; font-weight:700; }
+  .nav-links { display:flex; align-items:center; gap:32px; }
+  .nav-links a {
+    font-size:0.85rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--text2); text-decoration:none; transition:color 0.2s;
+    cursor:pointer;
+  }
+  .nav-links a:hover, .nav-links a.active { color:var(--text); }
+  .nav-right { display:flex; align-items:center; gap:20px; }
+  .theme-toggle {
+    width:44px; height:24px; border-radius:12px;
+    background:var(--border);
+    border:1px solid var(--border);
+    cursor:pointer; position:relative; transition:background 0.3s;
+    flex-shrink:0;
+  }
+  .theme-toggle::after {
+    content:''; position:absolute; top:3px; left:3px;
+    width:16px; height:16px; border-radius:50%;
+    background:var(--text);
+    transition:transform 0.25s, background 0.3s;
+  }
+  [data-theme="dark"] .theme-toggle::after { transform:translateX(20px); }
+  .basket-btn {
+    display:flex; align-items:center; gap:8px;
+    background:var(--accent); color:var(--bg);
+    border:none; cursor:pointer; padding:8px 18px;
+    font-family:'DM Sans',sans-serif; font-size:0.82rem;
+    font-weight:600; letter-spacing:0.06em; text-transform:uppercase;
+    transition:opacity 0.2s; position:relative;
+  }
+  .basket-btn:hover { opacity:0.85; }
+  .basket-count {
+    background:var(--bg); color:var(--text);
+    border-radius:50%; width:18px; height:18px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:0.72rem; font-weight:700;
+  }
+
+  /* PAGES */
+  .page { display:none; min-height:100vh; padding-top:64px; }
+  .page.active { display:block; }
+
+  /* HOME */
+  .hero {
+    height:92vh; display:flex; align-items:center; justify-content:center;
+    text-align:center; position:relative; overflow:hidden;
+    background:var(--bg);
+  }
+  .hero-bg {
+    position:absolute; inset:0;
+    background: radial-gradient(ellipse 80% 60% at 50% 40%, var(--bg2) 0%, transparent 70%);
+    pointer-events:none;
+  }
+  .hero-content { position:relative; z-index:1; }
+  .hero-eyebrow {
+    font-size:0.75rem; letter-spacing:0.2em; text-transform:uppercase;
+    color:var(--text2); margin-bottom:20px; font-weight:500;
+  }
+  .hero-title {
+    font-family:'Playfair Display',serif;
+    font-size:clamp(3.5rem,8vw,8rem);
+    line-height:0.95;
+    color:var(--text);
+    margin-bottom:32px;
+  }
+  .hero-title em { font-style:italic; }
+  .hero-sub {
+    font-size:1rem; color:var(--text2); max-width:380px; margin:0 auto 44px;
+    line-height:1.7; font-weight:300;
+  }
+  .hero-cta {
+    display:inline-flex; align-items:center; gap:12px;
+    background:var(--text); color:var(--bg);
+    padding:16px 40px; font-size:0.82rem; font-weight:600;
+    letter-spacing:0.1em; text-transform:uppercase;
+    cursor:pointer; border:none; font-family:'DM Sans',sans-serif;
+    transition:opacity 0.2s;
+  }
+  .hero-cta:hover { opacity:0.85; }
+  .hero-cta svg { width:14px; height:14px; }
+
+  .section-header {
+    padding:80px 40px 40px;
+    display:flex; align-items:flex-end; justify-content:space-between;
+    max-width:1400px; margin:0 auto;
+  }
+  .section-title {
+    font-family:'Playfair Display',serif;
+    font-size:clamp(2rem,4vw,3.2rem); font-weight:400;
+  }
+  .section-title em { font-style:italic; }
+  .section-link {
+    font-size:0.8rem; letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--text2); cursor:pointer; font-weight:500;
+    text-decoration:none; transition:color 0.2s;
+    display:flex; align-items:center; gap:8px; border:none; background:none;
+    font-family:'DM Sans',sans-serif;
+  }
+  .section-link:hover { color:var(--text); }
+
+  .products-grid {
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+    gap:2px; padding:0 40px 80px; max-width:1400px; margin:0 auto;
+  }
+  .product-card {
+    background:var(--card); cursor:pointer;
+    overflow:hidden; transition:transform 0.3s;
+    position:relative;
+  }
+  .product-card:hover { transform:translateY(-4px); }
+  .product-card:hover .product-img-inner { transform:scale(1.04); }
+  .product-img-wrap {
+    aspect-ratio:3/4; overflow:hidden;
+    background:var(--bg2); position:relative;
+  }
+  .product-img-inner {
+    width:100%; height:100%;
+    transition:transform 0.5s ease;
+    display:flex; align-items:center; justify-content:center;
+    font-size:4rem;
+  }
+  .product-badge {
+    position:absolute; top:12px; left:12px;
+    background:var(--badge); color:var(--badge-text);
+    font-size:0.68rem; font-weight:600; letter-spacing:0.1em;
+    text-transform:uppercase; padding:4px 10px;
+  }
+  .product-info { padding:20px; }
+  .product-name {
+    font-family:'Playfair Display',serif;
+    font-size:1rem; font-weight:400; margin-bottom:4px;
+  }
+  .product-price {
+    font-size:0.85rem; color:var(--text2); font-weight:500;
+  }
+  .product-price .sale { color:var(--text); font-weight:600; }
+  .product-price .orig { text-decoration:line-through; margin-right:8px; }
+  .product-add {
+    width:100%; padding:12px; background:var(--text); color:var(--bg);
+    border:none; cursor:pointer; font-family:'DM Sans',sans-serif;
+    font-size:0.78rem; font-weight:600; letter-spacing:0.08em;
+    text-transform:uppercase; transition:opacity 0.2s; margin-top:12px;
+  }
+  .product-add:hover { opacity:0.8; }
+
+  /* SHOP PAGE */
+  .shop-layout {
+    max-width:1400px; margin:0 auto;
+    display:grid; grid-template-columns:240px 1fr;
+    gap:0; padding:40px 40px 80px;
+    min-height:calc(100vh - 64px);
+  }
+  .shop-sidebar { padding-right:40px; border-right:1px solid var(--border); }
+  .filter-group { margin-bottom:36px; }
+  .filter-title {
+    font-size:0.72rem; letter-spacing:0.15em; text-transform:uppercase;
+    font-weight:600; color:var(--text2); margin-bottom:16px;
+  }
+  .filter-options { display:flex; flex-direction:column; gap:10px; }
+  .filter-option {
+    display:flex; align-items:center; gap:10px;
+    font-size:0.88rem; cursor:pointer; transition:color 0.2s;
+  }
+  .filter-option:hover { color:var(--text2); }
+  .filter-option input { accent-color:var(--text); }
+  .filter-option label { cursor:pointer; }
+  .shop-main { padding-left:40px; }
+  .shop-header {
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:32px;
+  }
+  .shop-count { font-size:0.85rem; color:var(--text2); }
+  .sort-select {
+    background:var(--input-bg); border:1px solid var(--border);
+    color:var(--text); padding:8px 14px; font-family:'DM Sans',sans-serif;
+    font-size:0.82rem; cursor:pointer; outline:none;
+  }
+
+  /* PRODUCT MODAL */
+  .modal-overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,0.5);
+    z-index:2000; display:none; align-items:center; justify-content:center;
+    backdrop-filter:blur(4px);
+  }
+  .modal-overlay.open { display:flex; }
+  .modal {
+    background:var(--bg); max-width:900px; width:92%;
+    display:grid; grid-template-columns:1fr 1fr;
+    max-height:90vh; overflow:auto;
+    position:relative;
+  }
+  .modal-img {
+    aspect-ratio:3/4; background:var(--bg2);
+    display:flex; align-items:center; justify-content:center;
+    font-size:8rem;
+  }
+  .modal-body { padding:48px 40px; display:flex; flex-direction:column; gap:20px; }
+  .modal-close {
+    position:absolute; top:16px; right:16px;
+    background:none; border:none; cursor:pointer;
+    font-size:1.4rem; color:var(--text2); z-index:10;
+    width:32px; height:32px; display:flex; align-items:center; justify-content:center;
+  }
+  .modal-name {
+    font-family:'Playfair Display',serif;
+    font-size:1.8rem; font-weight:400; line-height:1.2;
+  }
+  .modal-price { font-size:1.2rem; font-weight:600; }
+  .modal-desc { font-size:0.88rem; color:var(--text2); line-height:1.7; }
+  .variant-label {
+    font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase;
+    font-weight:600; color:var(--text2); margin-bottom:10px;
+  }
+  .size-grid { display:flex; gap:8px; flex-wrap:wrap; }
+  .size-btn {
+    width:44px; height:44px; border:1px solid var(--border);
+    background:none; color:var(--text); cursor:pointer;
+    font-family:'DM Sans',sans-serif; font-size:0.82rem;
+    transition:background 0.2s, color 0.2s;
+  }
+  .size-btn.active, .size-btn:hover {
+    background:var(--text); color:var(--bg);
+    border-color:var(--text);
+  }
+  .color-grid { display:flex; gap:8px; }
+  .color-swatch {
+    width:28px; height:28px; border-radius:50%;
+    cursor:pointer; border:2px solid transparent;
+    transition:border-color 0.2s;
+  }
+  .color-swatch.active { border-color:var(--text); }
+  .modal-add {
+    padding:16px; background:var(--text); color:var(--bg);
+    border:none; cursor:pointer; font-family:'DM Sans',sans-serif;
+    font-size:0.82rem; font-weight:600; letter-spacing:0.08em;
+    text-transform:uppercase; transition:opacity 0.2s; margin-top:8px;
+  }
+  .modal-add:hover { opacity:0.85; }
+
+  /* BASKET PAGE */
+  .basket-layout {
+    max-width:1200px; margin:0 auto;
+    padding:60px 40px;
+    display:grid; grid-template-columns:1fr 360px;
+    gap:48px; min-height:calc(100vh - 64px);
+  }
+  .basket-main h1 {
+    font-family:'Playfair Display',serif;
+    font-size:2rem; font-weight:400; margin-bottom:32px;
+  }
+  .basket-item {
+    display:grid; grid-template-columns:90px 1fr auto;
+    gap:20px; align-items:start;
+    padding:24px 0; border-bottom:1px solid var(--border);
+  }
+  .basket-item-img {
+    aspect-ratio:3/4; background:var(--bg2);
+    display:flex; align-items:center; justify-content:center;
+    font-size:2.4rem;
+  }
+  .basket-item-name {
+    font-family:'Playfair Display',serif;
+    font-size:1rem; font-weight:400; margin-bottom:6px;
+  }
+  .basket-item-meta { font-size:0.82rem; color:var(--text2); margin-bottom:12px; }
+  .qty-control {
+    display:flex; align-items:center; gap:12px;
+  }
+  .qty-btn {
+    width:30px; height:30px; border:1px solid var(--border);
+    background:none; color:var(--text); cursor:pointer;
+    font-size:1rem; display:flex; align-items:center; justify-content:center;
+    transition:background 0.2s;
+  }
+  .qty-btn:hover { background:var(--text); color:var(--bg); }
+  .qty-val { font-size:0.9rem; font-weight:600; min-width:20px; text-align:center; }
+  .remove-btn {
+    background:none; border:none; color:var(--text2); cursor:pointer;
+    font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase;
+    font-family:'DM Sans',sans-serif; margin-top:10px; padding:0;
+    transition:color 0.2s;
+  }
+  .remove-btn:hover { color:var(--text); }
+  .item-price {
+    font-size:0.95rem; font-weight:600; text-align:right;
+  }
+  .promo-row {
+    display:flex; gap:12px; margin:32px 0;
+  }
+  .promo-input {
+    flex:1; padding:12px 16px; background:var(--input-bg);
+    border:1px solid var(--border); color:var(--text);
+    font-family:'DM Sans',sans-serif; font-size:0.88rem; outline:none;
+  }
+  .promo-input::placeholder { color:var(--text2); }
+  .promo-apply {
+    padding:12px 24px; background:var(--text); color:var(--bg);
+    border:none; cursor:pointer; font-family:'DM Sans',sans-serif;
+    font-size:0.8rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase;
+    transition:opacity 0.2s;
+  }
+  .promo-apply:hover { opacity:0.85; }
+  .empty-basket {
+    text-align:center; padding:80px 40px;
+  }
+  .empty-basket h2 {
+    font-family:'Playfair Display',serif;
+    font-size:1.6rem; font-weight:400; margin-bottom:16px;
+  }
+  .empty-basket p { color:var(--text2); margin-bottom:32px; }
+  .continue-shopping {
+    background:none; border:none; cursor:pointer;
+    color:var(--text2); font-size:0.82rem; letter-spacing:0.1em;
+    text-transform:uppercase; font-family:'DM Sans',sans-serif;
+    font-weight:500; margin-top:16px; display:block; width:100%;
+    text-align:center; padding:12px; transition:color 0.2s;
+  }
+  .continue-shopping:hover { color:var(--text); }
+
+  /* ORDER SUMMARY */
+  .order-summary {
+    background:var(--card); border:1px solid var(--border);
+    padding:32px; align-self:start; position:sticky; top:80px;
+  }
+  .summary-title {
+    font-family:'Playfair Display',serif;
+    font-size:1.1rem; font-weight:400; margin-bottom:24px;
+  }
+  .summary-row {
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:12px; font-size:0.88rem;
+  }
+  .summary-row.label { color:var(--text2); }
+  .summary-row.discount { color:#2ebd7a; }
+  .summary-divider { border:none; border-top:1px solid var(--border); margin:16px 0; }
+  .summary-total {
+    display:flex; justify-content:space-between;
+    font-size:1.05rem; font-weight:600; margin-top:16px;
+  }
+  .delivery-est {
+    font-size:0.78rem; color:var(--text2);
+    margin-top:16px; padding-top:16px; border-top:1px solid var(--border);
+  }
+  .checkout-btn {
+    width:100%; padding:16px; background:var(--text); color:var(--bg);
+    border:none; cursor:pointer; font-family:'DM Sans',sans-serif;
+    font-size:0.82rem; font-weight:600; letter-spacing:0.08em;
+    text-transform:uppercase; transition:opacity 0.2s; margin-top:20px;
+  }
+  .checkout-btn:hover { opacity:0.85; }
+  .trust-row {
+    display:flex; align-items:center; gap:8px; justify-content:center;
+    margin-top:16px;
+  }
+  .trust-row svg { color:var(--text2); }
+  .trust-text { font-size:0.75rem; color:var(--text2); }
+  .payment-logos {
+    display:flex; gap:6px; flex-wrap:wrap; margin-top:12px; justify-content:center;
+  }
+  .pay-logo {
+    background:var(--bg2); border:1px solid var(--border);
+    padding:4px 10px; font-size:0.68rem; font-weight:600;
+    letter-spacing:0.06em; color:var(--text2); border-radius:3px;
+  }
+
+  /* CHECKOUT */
+  .checkout-layout {
+    max-width:1200px; margin:0 auto;
+    padding:60px 40px;
+    display:grid; grid-template-columns:1fr 360px;
+    gap:48px; min-height:calc(100vh - 64px);
+  }
+  .step-indicator {
+    display:flex; align-items:center; gap:0;
+    margin-bottom:40px;
+  }
+  .step {
+    display:flex; align-items:center; gap:10px;
+    font-size:0.78rem; letter-spacing:0.08em; text-transform:uppercase;
+    font-weight:500; color:var(--text2); padding:10px 0;
+  }
+  .step.active { color:var(--text); }
+  .step.done { color:var(--text2); }
+  .step-num {
+    width:28px; height:28px; border-radius:50%;
+    border:1.5px solid var(--border);
+    display:flex; align-items:center; justify-content:center;
+    font-size:0.75rem; flex-shrink:0;
+  }
+  .step.active .step-num {
+    background:var(--text); color:var(--bg); border-color:var(--text);
+  }
+  .step.done .step-num {
+    background:var(--text2); color:var(--bg); border-color:var(--text2);
+  }
+  .step-divider {
+    flex:1; height:1px; background:var(--border); margin:0 8px;
+  }
+  .checkout-form { display:flex; flex-direction:column; gap:16px; }
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .form-group { display:flex; flex-direction:column; gap:6px; }
+  .form-group label {
+    font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase;
+    font-weight:600; color:var(--text2);
+  }
+  .form-input {
+    padding:12px 16px; background:var(--input-bg);
+    border:1px solid var(--border); color:var(--text);
+    font-family:'DM Sans',sans-serif; font-size:0.9rem; outline:none;
+    transition:border-color 0.2s;
+  }
+  .form-input:focus { border-color:var(--text); }
+  .form-input::placeholder { color:var(--text2); }
+  .form-select {
+    padding:12px 16px; background:var(--input-bg);
+    border:1px solid var(--border); color:var(--text);
+    font-family:'DM Sans',sans-serif; font-size:0.9rem; outline:none;
+    cursor:pointer; appearance:none;
+  }
+  .section-sub {
+    font-family:'Playfair Display',serif;
+    font-size:1.5rem; font-weight:400; margin-bottom:24px;
+  }
+  .delivery-option {
+    border:1px solid var(--border); padding:20px;
+    display:flex; align-items:center; gap:16px;
+    cursor:pointer; transition:border-color 0.2s; margin-bottom:12px;
+  }
+  .delivery-option.selected { border-color:var(--text); }
+  .delivery-option input { accent-color:var(--text); }
+  .delivery-info { flex:1; }
+  .delivery-name { font-weight:500; font-size:0.9rem; margin-bottom:2px; }
+  .delivery-desc { font-size:0.8rem; color:var(--text2); }
+  .delivery-price { font-size:0.9rem; font-weight:600; }
+  .payment-option {
+    border:1px solid var(--border); padding:20px;
+    display:flex; align-items:center; gap:16px;
+    cursor:pointer; transition:border-color 0.2s; margin-bottom:12px;
+  }
+  .payment-option.selected { border-color:var(--text); }
+  .payment-option input { accent-color:var(--text); }
+  .payment-icon { font-size:1.4rem; width:32px; text-align:center; }
+  .payment-name { font-size:0.9rem; font-weight:500; }
+  .terms-row {
+    display:flex; gap:10px; align-items:flex-start; margin:16px 0;
+  }
+  .terms-row input { accent-color:var(--text); margin-top:3px; }
+  .terms-row label {
+    font-size:0.82rem; color:var(--text2); line-height:1.5;
+  }
+  .terms-row label a { color:var(--text); cursor:pointer; }
+  .step-btn {
+    padding:16px 40px; background:var(--text); color:var(--bg);
+    border:none; cursor:pointer; font-family:'DM Sans',sans-serif;
+    font-size:0.82rem; font-weight:600; letter-spacing:0.08em;
+    text-transform:uppercase; transition:opacity 0.2s; margin-top:8px;
+  }
+  .step-btn:hover { opacity:0.85; }
+  .step-back {
+    background:none; border:none; cursor:pointer;
+    color:var(--text2); font-size:0.8rem; letter-spacing:0.08em;
+    text-transform:uppercase; font-family:'DM Sans',sans-serif;
+    font-weight:500; margin-top:12px; padding:0; transition:color 0.2s;
+  }
+  .step-back:hover { color:var(--text); }
+
+  /* ORDER REVIEW */
+  .review-items { margin-bottom:24px; }
+  .review-item {
+    display:flex; gap:16px; padding:16px 0;
+    border-bottom:1px solid var(--border);
+  }
+  .review-item-img {
+    width:60px; aspect-ratio:3/4; background:var(--bg2);
+    display:flex; align-items:center; justify-content:center; font-size:1.5rem;
+    flex-shrink:0;
+  }
+  .review-item-info { flex:1; }
+  .review-item-name { font-size:0.9rem; font-weight:500; margin-bottom:4px; }
+  .review-item-meta { font-size:0.8rem; color:var(--text2); }
+  .review-item-price { font-size:0.9rem; font-weight:600; }
+  .address-review {
+    background:var(--bg2); padding:20px; margin-bottom:20px;
+    font-size:0.88rem; line-height:1.8;
+  }
+
+  /* ORDER CONFIRMATION */
+  .confirmation-layout {
+    max-width:680px; margin:0 auto;
+    padding:80px 40px; text-align:center;
+  }
+  .confirmation-icon {
+    width:80px; height:80px; border-radius:50%;
+    background:var(--text); display:flex; align-items:center;
+    justify-content:center; margin:0 auto 32px;
+  }
+  .confirmation-icon svg { color:var(--bg); }
+  .confirmation-layout h1 {
+    font-family:'Playfair Display',serif;
+    font-size:2.5rem; font-weight:400; margin-bottom:16px;
+  }
+  .confirmation-layout p { color:var(--text2); line-height:1.7; margin-bottom:8px; }
+  .order-num {
+    font-family:'Playfair Display',serif;
+    font-size:1.1rem; font-style:italic; color:var(--text2); margin-bottom:40px;
+  }
+  .confirmation-card {
+    background:var(--card); border:1px solid var(--border);
+    padding:32px; text-align:left; margin-bottom:24px;
+  }
+  .conf-title {
+    font-size:0.72rem; letter-spacing:0.15em; text-transform:uppercase;
+    font-weight:600; color:var(--text2); margin-bottom:16px;
+  }
+  .conf-row {
+    display:flex; justify-content:space-between; font-size:0.88rem;
+    padding:8px 0; border-bottom:1px solid var(--border);
+  }
+  .conf-row:last-child { border:none; }
+  .conf-label { color:var(--text2); }
+  .track-btn, .account-btn {
+    width:100%; padding:14px; border:1px solid var(--text);
+    cursor:pointer; font-family:'DM Sans',sans-serif;
+    font-size:0.82rem; font-weight:600; letter-spacing:0.08em;
+    text-transform:uppercase; transition:all 0.2s; margin-bottom:12px;
+  }
+  .track-btn {
+    background:var(--text); color:var(--bg);
+  }
+  .account-btn { background:none; color:var(--text); }
+  .track-btn:hover { opacity:0.85; }
+  .account-btn:hover { background:var(--text); color:var(--bg); }
+
+  /* ABOUT */
+  .about-hero {
+    height:50vh; display:flex; align-items:center; justify-content:center;
+    text-align:center; background:var(--bg2);
+    flex-direction:column; gap:16px;
+  }
+  .about-hero h1 {
+    font-family:'Playfair Display',serif;
+    font-size:clamp(2.5rem,6vw,5rem); font-weight:400;
+  }
+  .about-hero h1 em { font-style:italic; }
+  .about-hero p { color:var(--text2); max-width:500px; line-height:1.7; }
+  .about-content {
+    max-width:900px; margin:0 auto; padding:80px 40px;
+  }
+  .about-block {
+    display:grid; grid-template-columns:1fr 1fr; gap:60px; margin-bottom:80px;
+    align-items:center;
+  }
+  .about-block.reverse { direction:rtl; }
+  .about-block.reverse > * { direction:ltr; }
+  .about-text h2 {
+    font-family:'Playfair Display',serif;
+    font-size:2rem; font-weight:400; margin-bottom:20px;
+  }
+  .about-text h2 em { font-style:italic; }
+  .about-text p { color:var(--text2); line-height:1.8; font-size:0.92rem; }
+  .about-visual {
+    aspect-ratio:4/3; background:var(--bg2);
+    display:flex; align-items:center; justify-content:center; font-size:5rem;
+  }
+  .values-grid {
+    display:grid; grid-template-columns:repeat(3,1fr); gap:2px;
+    margin-bottom:80px;
+  }
+  .value-card {
+    background:var(--card); padding:40px 32px;
+  }
+  .value-num {
+    font-family:'Playfair Display',serif;
+    font-size:2.5rem; font-style:italic; color:var(--text2); margin-bottom:16px;
+  }
+  .value-title {
+    font-family:'Playfair Display',serif;
+    font-size:1.1rem; margin-bottom:10px;
+  }
+  .value-text { font-size:0.85rem; color:var(--text2); line-height:1.7; }
+
+  /* CONTACT */
+  .contact-layout {
+    max-width:1000px; margin:0 auto;
+    padding:80px 40px;
+    display:grid; grid-template-columns:1fr 1fr; gap:80px;
+  }
+  .contact-info h1 {
+    font-family:'Playfair Display',serif;
+    font-size:2.5rem; font-weight:400; margin-bottom:24px;
+  }
+  .contact-info h1 em { font-style:italic; }
+  .contact-info p { color:var(--text2); line-height:1.8; margin-bottom:32px; }
+  .contact-detail {
+    display:flex; flex-direction:column; gap:16px;
+  }
+  .contact-item {
+    display:flex; gap:12px; align-items:flex-start;
+  }
+  .contact-item-icon {
+    width:36px; height:36px; background:var(--bg2);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    font-size:1rem;
+  }
+  .contact-item-text { font-size:0.88rem; color:var(--text2); line-height:1.6; }
+  .contact-item-text strong { color:var(--text); display:block; margin-bottom:2px; }
+  .contact-form-wrap {}
+  .contact-submit {
+    width:100%; padding:16px; background:var(--text); color:var(--bg);
+    border:none; cursor:pointer; font-family:'DM Sans',sans-serif;
+    font-size:0.82rem; font-weight:600; letter-spacing:0.08em;
+    text-transform:uppercase; transition:opacity 0.2s; margin-top:8px;
+  }
+  .contact-submit:hover { opacity:0.85; }
+
+  /* FOOTER */
+  footer {
+    background:var(--text); color:var(--bg);
+    padding:60px 40px 30px;
+  }
+  .footer-grid {
+    display:grid; grid-template-columns:2fr 1fr 1fr 1fr;
+    gap:40px; max-width:1400px; margin:0 auto 40px;
+  }
+  .footer-brand-name {
+    font-family:'Playfair Display',serif;
+    font-size:1.8rem; margin-bottom:16px;
+  }
+  .footer-brand-name em { font-style:italic; }
+  .footer-tagline { font-size:0.85rem; opacity:0.6; line-height:1.6; }
+  .footer-col-title {
+    font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase;
+    font-weight:600; opacity:0.5; margin-bottom:16px;
+  }
+  .footer-links { display:flex; flex-direction:column; gap:10px; }
+  .footer-links a {
+    font-size:0.85rem; opacity:0.7; text-decoration:none; color:inherit;
+    cursor:pointer; transition:opacity 0.2s;
+  }
+  .footer-links a:hover { opacity:1; }
+  .footer-bottom {
+    border-top:1px solid rgba(255,255,255,0.1);
+    padding-top:24px; max-width:1400px; margin:0 auto;
+    display:flex; justify-content:space-between; align-items:center;
+    font-size:0.78rem; opacity:0.5;
+  }
+
+  /* COOKIE BANNER */
+  .cookie-banner {
+    position:fixed; bottom:0; left:0; right:0;
+    background:var(--text); color:var(--bg);
+    padding:20px 40px; display:flex; align-items:center;
+    justify-content:space-between; gap:24px; z-index:9000;
+    border-top:2px solid var(--border);
+    transform:translateY(0); transition:transform 0.4s;
+  }
+  .cookie-banner.hidden { transform:translateY(120%); }
+  .cookie-text { font-size:0.85rem; opacity:0.85; max-width:600px; line-height:1.5; }
+  .cookie-text a { color:inherit; opacity:1; }
+  .cookie-accept {
+    padding:10px 24px; background:var(--bg); color:var(--text);
+    border:none; cursor:pointer; font-family:'DM Sans',sans-serif;
+    font-size:0.78rem; font-weight:600; letter-spacing:0.08em;
+    text-transform:uppercase; flex-shrink:0; transition:opacity 0.2s;
+  }
+  .cookie-accept:hover { opacity:0.85; }
+
+  /* TOAST */
+  .toast {
+    position:fixed; bottom:80px; right:40px; z-index:8000;
+    background:var(--text); color:var(--bg);
+    padding:14px 24px; font-size:0.85rem; font-weight:500;
+    transform:translateY(20px); opacity:0;
+    transition:all 0.3s; pointer-events:none;
+  }
+  .toast.show { transform:translateY(0); opacity:1; }
+
+  /* ANIMATIONS */
+  @keyframes fadeIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+  .hero-content { animation:fadeIn 0.8s ease forwards; }
+
+  /* RESPONSIVE basics */
+  @media(max-width:768px) {
+    nav { padding:0 20px; }
+    .nav-links { display:none; }
+    .hero-title { font-size:3rem; }
+    .products-grid { padding:0 20px 60px; grid-template-columns:1fr 1fr; }
+    .shop-layout { grid-template-columns:1fr; padding:20px; }
+    .shop-sidebar { display:none; }
+    .basket-layout, .checkout-layout { grid-template-columns:1fr; padding:20px; }
+    .modal { grid-template-columns:1fr; }
+    .modal-img { aspect-ratio:16/9; }
+    .contact-layout { grid-template-columns:1fr; padding:40px 20px; }
+    .footer-grid { grid-template-columns:1fr 1fr; }
+    .about-block { grid-template-columns:1fr; }
+    .about-block.reverse { direction:ltr; }
+    .values-grid { grid-template-columns:1fr; }
+    .section-header { padding:40px 20px 20px; }
+    .cookie-banner { flex-direction:column; text-align:center; padding:20px; }
+  }
+</style>
+</head>
+<body data-theme="light">
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">
+    <span class="italic">Tri</span><span class="bold">Nova</span>
+  </div>
+  <div class="nav-links">
+    <a onclick="showPage('home')" id="nav-home" class="active">Home</a>
+    <a onclick="showPage('shop')" id="nav-shop">Shop</a>
+    <a onclick="showPage('about')" id="nav-about">About</a>
+    <a onclick="showPage('contact')" id="nav-contact">Contact</a>
+  </div>
+  <div class="nav-right">
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme"></button>
+    <button class="basket-btn" onclick="showPage('basket')">
+      Basket
+      <span class="basket-count" id="basket-count">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- COOKIE BANNER -->
+<div class="cookie-banner" id="cookie-banner">
+  <span class="cookie-text">
+    We use cookies to enhance your experience. By continuing, you agree to our
+    <a href="#">cookie policy</a> and <a href="#">privacy policy</a>.
+  </span>
+  <button class="cookie-accept" onclick="acceptCookies()">Accept All</button>
+</div>
+
+<!-- HOME PAGE -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">New Collection — Spring 2026</div>
+      <h1 class="hero-title"><em>Wear</em><br>Your Truth</h1>
+      <p class="hero-sub">Refined essentials crafted for those who move with intention. Quality that speaks quietly.</p>
+      <button class="hero-cta" onclick="showPage('shop')">
+        Explore Collection
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <h2 class="section-title"><em>Featured</em> Pieces</h2>
+    <button class="section-link" onclick="showPage('shop')">View All
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </button>
+  </div>
+  <div class="products-grid" id="featured-grid"></div>
+
+  <div style="background:var(--bg2); padding:80px 40px; text-align:center; margin:0;">
+    <div style="max-width:500px; margin:0 auto;">
+      <div style="font-size:0.75rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--text2); margin-bottom:16px; font-weight:500;">ESTD 2026</div>
+      <h2 style="font-family:'Playfair Display',serif; font-size:2.5rem; font-weight:400; margin-bottom:20px;">
+        Built on <em style="font-style:italic;">three</em> values
+      </h2>
+      <p style="color:var(--text2); line-height:1.8; font-size:0.92rem; margin-bottom:40px;">
+        Quality. Simplicity. Integrity. Every piece we make starts with these three principles. Nothing more, nothing less.
+      </p>
+      <button class="hero-cta" onclick="showPage('about')" style="background:var(--text); color:var(--bg);">Our Story</button>
+    </div>
+  </div>
+</div>
+
+<!-- SHOP PAGE -->
+<div class="page" id="page-shop">
+  <div class="shop-layout">
+    <aside class="shop-sidebar">
+      <div style="margin-bottom:32px;">
+        <div style="font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:400; margin-bottom:4px;"><em>Filter</em></div>
+      </div>
+      <div class="filter-group">
+        <div class="filter-title">Category</div>
+        <div class="filter-options">
+          <div class="filter-option"><input type="checkbox" id="cat-all" checked><label for="cat-all">All Items</label></div>
+          <div class="filter-option"><input type="checkbox" id="cat-tops"><label for="cat-tops">Tops</label></div>
+          <div class="filter-option"><input type="checkbox" id="cat-bottoms"><label for="cat-bottoms">Bottoms</label></div>
+          <div class="filter-option"><input type="checkbox" id="cat-outerwear"><label for="cat-outerwear">Outerwear</label></div>
+          <div class="filter-option"><input type="checkbox" id="cat-acc"><label for="cat-acc">Accessories</label></div>
+        </div>
+      </div>
+      <div class="filter-group">
+        <div class="filter-title">Size</div>
+        <div class="filter-options">
+          <div class="filter-option"><input type="checkbox"><label>XS</label></div>
+          <div class="filter-option"><input type="checkbox"><label>S</label></div>
+          <div class="filter-option"><input type="checkbox" checked><label>M</label></div>
+          <div class="filter-option"><input type="checkbox" checked><label>L</label></div>
+          <div class="filter-option"><input type="checkbox"><label>XL</label></div>
+        </div>
+      </div>
+      <div class="filter-group">
+        <div class="filter-title">Price</div>
+        <div class="filter-options">
+          <div class="filter-option"><input type="checkbox"><label>Under €50</label></div>
+          <div class="filter-option"><input type="checkbox" checked><label>€50 – €100</label></div>
+          <div class="filter-option"><input type="checkbox" checked><label>€100 – €200</label></div>
+          <div class="filter-option"><input type="checkbox"><label>Over €200</label></div>
+        </div>
+      </div>
+    </aside>
+    <div class="shop-main">
+      <div class="shop-header">
+        <span class="shop-count">24 products</span>
+        <select class="sort-select">
+          <option>Sort: Featured</option>
+          <option>Price: Low to High</option>
+          <option>Price: High to Low</option>
+          <option>Newest</option>
+        </select>
+      </div>
+      <div class="products-grid" style="padding:0 0 40px;" id="shop-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- BASKET PAGE -->
+<div class="page" id="page-basket">
+  <div class="basket-layout" id="basket-layout">
+    <div class="basket-main">
+      <h1>Your <em style="font-family:'Playfair Display',serif; font-style:italic;">Basket</em></h1>
+      <div id="basket-items"></div>
+      <div id="promo-section" style="display:none;">
+        <div class="promo-row">
+          <input class="promo-input" placeholder="Promo or discount code" id="promo-input">
+          <button class="promo-apply" onclick="applyPromo()">Apply</button>
+        </div>
+        <div id="promo-msg" style="font-size:0.82rem; margin-top:-8px; margin-bottom:8px;"></div>
+        <button class="continue-shopping" onclick="showPage('shop')">← Continue Shopping</button>
+      </div>
+    </div>
+    <div class="order-summary" id="basket-summary" style="display:none;">
+      <div class="summary-title">Order Summary</div>
+      <div class="summary-row label"><span>Subtotal</span><span id="sum-subtotal">€0.00</span></div>
+      <div class="summary-row discount" id="sum-discount-row" style="display:none;"><span>Discount (NOVA10)</span><span id="sum-discount"></span></div>
+      <div class="summary-row label"><span>Shipping</span><span id="sum-shipping">Free</span></div>
+      <div class="summary-row label"><span>VAT (20%)</span><span id="sum-vat">€0.00</span></div>
+      <hr class="summary-divider">
+      <div class="summary-total"><span>Total</span><span id="sum-total">€0.00</span></div>
+      <div class="delivery-est" id="sum-delivery">Estimated delivery: 3-5 business days</div>
+      <button class="checkout-btn" onclick="startCheckout()">Continue to Checkout</button>
+      <div class="trust-row">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        <span class="trust-text">Secure SSL Checkout</span>
+      </div>
+      <div class="payment-logos">
+        <span class="pay-logo">VISA</span>
+        <span class="pay-logo">MC</span>
+        <span class="pay-logo">PayPal</span>
+        <span class="pay-logo">Apple Pay</span>
+        <span class="pay-logo">BNPL</span>
+      </div>
+      <div style="font-size:0.75rem; color:var(--text2); text-align:center; margin-top:12px;">✓ Free returns within 30 days</div>
+    </div>
+  </div>
+</div>
+
+<!-- CHECKOUT PAGE -->
+<div class="page" id="page-checkout">
+  <div class="checkout-layout">
+    <div>
+      <div class="step-indicator">
+        <div class="step" id="step-1"><span class="step-num">1</span><span>Delivery</span></div>
+        <div class="step-divider"></div>
+        <div class="step" id="step-2"><span class="step-num">2</span><span>Shipping</span></div>
+        <div class="step-divider"></div>
+        <div class="step" id="step-3"><span class="step-num">3</span><span>Payment</span></div>
+        <div class="step-divider"></div>
+        <div class="step" id="step-4"><span class="step-num">4</span><span>Review</span></div>
+      </div>
+
+      <!-- Step 1: Address -->
+      <div id="checkout-step-1">
+        <div class="section-sub">Delivery Address</div>
+        <div class="checkout-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>First Name</label>
+              <input class="form-input" id="fn" placeholder="Emma">
+            </div>
+            <div class="form-group">
+              <label>Last Name</label>
+              <input class="form-input" id="ln" placeholder="Müller">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Address Line 1</label>
+            <input class="form-input" id="addr1" placeholder="Königsallee 14">
+          </div>
+          <div class="form-group">
+            <label>Address Line 2 (optional)</label>
+            <input class="form-input" id="addr2" placeholder="Apartment, floor...">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Postcode</label>
+              <input class="form-input" id="postcode" placeholder="40212">
+            </div>
+            <div class="form-group">
+              <label>City</label>
+              <input class="form-input" id="city" placeholder="Düsseldorf">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Country</label>
+            <select class="form-input form-select" id="country">
+              <option>Germany</option><option>Austria</option><option>Switzerland</option>
+              <option>Netherlands</option><option>United Kingdom</option><option>France</option>
+            </select>
+          </div>
+          <button class="step-btn" onclick="goToStep(2)">Continue to Shipping</button>
+        </div>
+      </div>
+
+      <!-- Step 2: Delivery method -->
+      <div id="checkout-step-2" style="display:none;">
+        <div class="section-sub">Delivery Method</div>
+        <div class="delivery-option selected" onclick="selectDelivery(this,'standard',0)" id="del-standard">
+          <input type="radio" name="delivery" checked>
+          <div class="delivery-info">
+            <div class="delivery-name">Standard Delivery</div>
+            <div class="delivery-desc">3-5 business days</div>
+          </div>
+          <div class="delivery-price">Free</div>
+        </div>
+        <div class="delivery-option" onclick="selectDelivery(this,'express',9.99)" id="del-express">
+          <input type="radio" name="delivery">
+          <div class="delivery-info">
+            <div class="delivery-name">Express Delivery</div>
+            <div class="delivery-desc">1-2 business days</div>
+          </div>
+          <div class="delivery-price">€9.99</div>
+        </div>
+        <div class="delivery-option" onclick="selectDelivery(this,'collect',0)" id="del-collect">
+          <input type="radio" name="delivery">
+          <div class="delivery-info">
+            <div class="delivery-name">Click & Collect</div>
+            <div class="delivery-desc">Pick up in store, ready in 2 hrs</div>
+          </div>
+          <div class="delivery-price">Free</div>
+        </div>
+        <br>
+        <button class="step-btn" onclick="goToStep(3)">Continue to Payment</button>
+        <br><button class="step-back" onclick="goToStep(1)">← Back</button>
+      </div>
+
+      <!-- Step 3: Payment -->
+      <div id="checkout-step-3" style="display:none;">
+        <div class="section-sub">Payment Method</div>
+        <div class="payment-option selected" onclick="selectPayment(this)">
+          <input type="radio" name="payment" checked>
+          <div class="payment-icon">💳</div>
+          <div class="payment-name">Credit / Debit Card</div>
+        </div>
+        <div id="card-fields" style="display:grid; gap:14px; padding:20px; background:var(--bg2); margin-bottom:12px;">
+          <div class="form-group"><label>Card Number</label><input class="form-input" placeholder="1234 5678 9012 3456"></div>
+          <div class="form-row">
+            <div class="form-group"><label>Expiry</label><input class="form-input" placeholder="MM / YY"></div>
+            <div class="form-group"><label>CVV</label><input class="form-input" placeholder="123"></div>
+          </div>
+          <div class="form-group"><label>Name on Card</label><input class="form-input" placeholder="Emma Müller"></div>
+        </div>
+        <div class="payment-option" onclick="selectPayment(this)">
+          <input type="radio" name="payment">
+          <div class="payment-icon">🅿️</div>
+          <div class="payment-name">PayPal</div>
+        </div>
+        <div class="payment-option" onclick="selectPayment(this)">
+          <input type="radio" name="payment">
+          <div class="payment-icon">🍎</div>
+          <div class="payment-name">Apple Pay</div>
+        </div>
+        <div class="payment-option" onclick="selectPayment(this)">
+          <input type="radio" name="payment">
+          <div class="payment-icon">📅</div>
+          <div class="payment-name">Buy Now, Pay Later (Klarna)</div>
+        </div>
+        <br>
+        <button class="step-btn" onclick="goToStep(4)">Review Order</button>
+        <br><button class="step-back" onclick="goToStep(2)">← Back</button>
+      </div>
+
+      <!-- Step 4: Review -->
+      <div id="checkout-step-4" style="display:none;">
+        <div class="section-sub">Review Your Order</div>
+        <div class="review-items" id="review-items-list"></div>
+        <div style="margin:24px 0;">
+          <div class="conf-title">Delivery Address</div>
+          <div class="address-review" id="review-address">No address entered.</div>
+        </div>
+        <div class="terms-row">
+          <input type="checkbox" id="terms-check">
+          <label for="terms-check">
+            I agree to the <a href="#">Terms & Conditions</a> and
+            <a href="#">Returns Policy</a>. I have read the
+            <a href="#">Privacy Policy</a>.
+          </label>
+        </div>
+        <div class="trust-row" style="justify-content:flex-start; margin:16px 0;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text2)"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          <span class="trust-text">256-bit SSL encrypted payment</span>
+        </div>
+        <button class="step-btn" onclick="placeOrder()">Place Order</button>
+        <br><button class="step-back" onclick="goToStep(3)">← Back</button>
+      </div>
+    </div>
+
+    <!-- Order summary (stays visible all steps) -->
+    <div>
+      <div class="order-summary">
+        <div class="summary-title">Order Summary</div>
+        <div id="checkout-summary-items" style="margin-bottom:16px; font-size:0.85rem; color:var(--text2);"></div>
+        <div class="summary-row label"><span>Subtotal</span><span id="co-subtotal">€0.00</span></div>
+        <div class="summary-row discount" id="co-discount-row" style="display:none;"><span>Discount</span><span id="co-discount"></span></div>
+        <div class="summary-row label"><span>Shipping</span><span id="co-shipping">Free</span></div>
+        <div class="summary-row label"><span>VAT (20%)</span><span id="co-vat">€0.00</span></div>
+        <hr class="summary-divider">
+        <div class="summary-total"><span>Total</span><span id="co-total">€0.00</span></div>
+        <div class="delivery-est" id="co-delivery">Estimated delivery: 3-5 business days</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRMATION PAGE -->
+<div class="page" id="page-confirmation">
+  <div class="confirmation-layout">
+    <div class="confirmation-icon">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M20 6L9 17l-5-5"/>
+      </svg>
+    </div>
+    <h1>Order <em style="font-style:italic; font-family:'Playfair Display',serif;">Confirmed</em></h1>
+    <p>Thank you for your order. You'll receive a confirmation email shortly.</p>
+    <div class="order-num" id="conf-order-num">#TN-2026-0001</div>
+
+    <div class="confirmation-card">
+      <div class="conf-title">Order Details</div>
+      <div id="conf-items"></div>
+    </div>
+
+    <div class="confirmation-card">
+      <div class="conf-title">Delivery</div>
+      <div class="conf-row"><span class="conf-label">Address</span><span id="conf-address" style="text-align:right; font-size:0.85rem;"></span></div>
+      <div class="conf-row"><span class="conf-label">Method</span><span id="conf-method">Standard</span></div>
+      <div class="conf-row"><span class="conf-label">Estimated</span><span id="conf-est">3-5 business days</span></div>
+    </div>
+
+    <button class="track-btn" onclick="showToast('Order tracking will be available once shipped.')">Track My Order</button>
+    <button class="account-btn" onclick="showToast('Account creation coming soon.')">Create an Account</button>
+    <p style="font-size:0.8rem; color:var(--text2); margin-top:8px;">Checked out as guest. Create an account to track orders and save your details.</p>
+  </div>
+</div>
+
+<!-- ABOUT PAGE -->
+<div class="page" id="page-about">
+  <div class="about-hero">
+    <h1><em>Our</em> Story</h1>
+    <p>TriNova was founded on a simple idea: fashion should be honest. No noise, no excess. Just quality you can feel.</p>
+  </div>
+  <div class="about-content">
+    <div class="about-block">
+      <div class="about-text">
+        <h2>Where <em>it</em> began</h2>
+        <p>Founded in 2026, TriNova started as a reaction to an industry obsessed with volume over value. We set out to build something different: a brand built on restraint, quality, and truth. Every piece we make is designed to last, to fit well, and to feel effortless.</p>
+      </div>
+      <div class="about-visual">🧵</div>
+    </div>
+    <div class="about-block reverse">
+      <div class="about-text">
+        <h2>How we <em>make</em> things</h2>
+        <p>We work directly with manufacturers in Portugal and Turkey who share our standards. Every fabric is tested for durability and comfort before it enters our supply chain. We produce in small batches to reduce waste and ensure consistent quality.</p>
+      </div>
+      <div class="about-visual">🏭</div>
+    </div>
+    <div class="values-grid">
+      <div class="value-card">
+        <div class="value-num">01</div>
+        <div class="value-title">Quality</div>
+        <div class="value-text">We use only premium-grade fabrics and enforce strict quality checks at every stage of production.</div>
+      </div>
+      <div class="value-card">
+        <div class="value-num">02</div>
+        <div class="value-title">Simplicity</div>
+        <div class="value-text">Every design decision is intentional. We remove what doesn't belong and keep only what matters.</div>
+      </div>
+      <div class="value-card">
+        <div class="value-num">03</div>
+        <div class="value-title">Integrity</div>
+        <div class="value-text">Transparent pricing, honest sourcing, and real sustainability. We say what we do and do what we say.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT PAGE -->
+<div class="page" id="page-contact">
+  <div class="contact-layout">
+    <div class="contact-info">
+      <h1>Get in <em>Touch</em></h1>
+      <p>Questions, collaborations, press enquiries. We read every message and reply within one business day.</p>
+      <div class="contact-detail">
+        <div class="contact-item">
+          <div class="contact-item-icon">📍</div>
+          <div class="contact-item-text"><strong>Address</strong>Königsallee 14, 40212 Düsseldorf, Germany</div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-item-icon">✉️</div>
+          <div class="contact-item-text"><strong>Email</strong>hello@trinova.store</div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-item-icon">📞</div>
+          <div class="contact-item-text"><strong>Phone</strong>+49 211 000 0000</div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-item-icon">🕐</div>
+          <div class="contact-item-text"><strong>Hours</strong>Mon-Fri 9:00–18:00 CET</div>
+        </div>
+      </div>
+    </div>
+    <div class="contact-form-wrap">
+      <div style="margin-bottom:32px;">
+        <div style="font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:400; margin-bottom:20px;"><em>Send</em> a message</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div class="form-row">
+          <div class="form-group"><label>First Name</label><input class="form-input" placeholder="Emma"></div>
+          <div class="form-group"><label>Last Name</label><input class="form-input" placeholder="Müller"></div>
+        </div>
+        <div class="form-group"><label>Email</label><input class="form-input" type="email" placeholder="emma@email.com"></div>
+        <div class="form-group"><label>Subject</label>
+          <select class="form-input form-select">
+            <option>General Enquiry</option><option>Order Issue</option><option>Returns</option>
+            <option>Press / Collaboration</option><option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Message</label>
+          <textarea class="form-input" rows="5" placeholder="Your message..." style="resize:vertical;"></textarea>
+        </div>
+        <button class="contact-submit" onclick="showToast('Message sent. We will reply within 24h.')">Send Message</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="product-modal" onclick="closeModal(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    <div class="modal-img" id="modal-img">👕</div>
+    <div class="modal-body">
+      <div>
+        <div style="font-size:0.72rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--text2); margin-bottom:8px;" id="modal-cat">TOPS</div>
+        <div class="modal-name" id="modal-name">Product Name</div>
+      </div>
+      <div class="modal-price" id="modal-price">€0.00</div>
+      <div class="modal-desc" id="modal-desc">Description</div>
+      <div>
+        <div class="variant-label">Size</div>
+        <div class="size-grid" id="modal-sizes">
+          <button class="size-btn" onclick="selectSize(this)">XS</button>
+          <button class="size-btn active" onclick="selectSize(this)">S</button>
+          <button class="size-btn" onclick="selectSize(this)">M</button>
+          <button class="size-btn" onclick="selectSize(this)">L</button>
+          <button class="size-btn" onclick="selectSize(this)">XL</button>
+        </div>
+      </div>
+      <div>
+        <div class="variant-label">Color</div>
+        <div class="color-grid" id="modal-colors"></div>
+      </div>
+      <button class="modal-add" onclick="addCurrentToBasket()">Add to Basket</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand-name"><em>Tri</em>Nova</div>
+      <div class="footer-tagline">Quality. Simplicity. Integrity.<br>Fashion that speaks for itself.<br>ESTD 2026 — Düsseldorf</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Shop</div>
+      <div class="footer-links">
+        <a onclick="showPage('shop')">New Arrivals</a>
+        <a onclick="showPage('shop')">Tops</a>
+        <a onclick="showPage('shop')">Bottoms</a>
+        <a onclick="showPage('shop')">Outerwear</a>
+        <a onclick="showPage('shop')">Accessories</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <div class="footer-links">
+        <a onclick="showPage('about')">About Us</a>
+        <a onclick="showPage('contact')">Contact</a>
+        <a href="#">Careers</a>
+        <a href="#">Press</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Help</div>
+      <div class="footer-links">
+        <a href="#">Returns</a>
+        <a href="#">Shipping Info</a>
+        <a href="#">Size Guide</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms & Conditions</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 TriNova. All rights reserved.</span>
+    <span>Made with care in Düsseldorf.</span>
+  </div>
+</footer>
+
+<script>
+// =====================
+// PRODUCT DATA
+// =====================
+const products = [
+  { id:1, name:'Linen Shirt', cat:'Tops', price:89, emoji:'👕', badge:'New', colors:['#EDECE8','#1A1A1A','#8B6F47'], desc:'Breathable Italian linen. Relaxed fit. Button-down collar.' },
+  { id:2, name:'Wool Trousers', cat:'Bottoms', price:145, sale:119, emoji:'👖', badge:'Sale', colors:['#1A1A1A','#8B6F47'], desc:'Merino wool blend. Tailored cut. Elasticated waistband.' },
+  { id:3, name:'Cotton Tee', cat:'Tops', price:55, emoji:'👕', colors:['#fff','#1A1A1A','#EDECE8','#8B6F47'], desc:'100% organic cotton. Relaxed unisex fit. Pre-washed softness.' },
+  { id:4, name:'Minimal Jacket', cat:'Outerwear', price:225, emoji:'🧥', badge:'New', colors:['#1A1A1A','#EDECE8'], desc:'Water-resistant shell. Clean silhouette. Internal media pocket.' },
+  { id:5, name:'Knit Sweater', cat:'Tops', price:135, emoji:'🧶', colors:['#EDECE8','#8B6F47','#1A1A1A'], desc:'Merino knit. Ribbed hem and cuffs. Slightly oversized drape.' },
+  { id:6, name:'Chino Shorts', cat:'Bottoms', price:75, emoji:'🩳', colors:['#EDECE8','#8B6F47'], desc:'Stretch cotton. Mid-thigh length. Side and back pockets.' },
+  { id:7, name:'Canvas Cap', cat:'Accessories', price:45, emoji:'🧢', colors:['#1A1A1A','#EDECE8'], desc:'Washed canvas. Adjustable back strap. Tonal embroidery.' },
+  { id:8, name:'Structured Coat', cat:'Outerwear', price:290, emoji:'🧥', badge:'New', colors:['#1A1A1A'], desc:'Wool-cashmere blend. Double-breasted. Notch lapel.' },
+  { id:9, name:'Ribbed Tank', cat:'Tops', price:49, emoji:'👕', colors:['#fff','#1A1A1A','#EDECE8'], desc:'Fitted ribbed cotton. Low armhole. Elongated hem.' },
+  { id:10, name:'Cargo Pants', cat:'Bottoms', price:115, emoji:'👖', colors:['#1A1A1A','#8B6F47','#EDECE8'], desc:'Heavy cotton twill. Six pockets. Adjustable hems.' },
+  { id:11, name:'Silk Scarf', cat:'Accessories', price:65, emoji:'🧣', badge:'New', colors:['#EDECE8','#8B6F47'], desc:'100% mulberry silk. 90x90cm. Rolled hand-stitched edges.' },
+  { id:12, name:'Denim Jacket', cat:'Outerwear', price:175, emoji:'🧥', colors:['#1A1A1A'], desc:'Raw selvedge denim. Classic fit. Contrast stitching.' },
+];
+
+let basket = [];
+let currentProduct = null;
+let selectedSize = 'S';
+let selectedColor = null;
+let deliveryCost = 0;
+let discountApplied = false;
+let deliveryMethod = 'Standard';
+let deliveryEst = '3-5 business days';
+let currentCheckoutStep = 1;
+
+// =====================
+// RENDER PRODUCTS
+// =====================
+function renderProducts(gridId, items) {
+  const grid = document.getElementById(gridId);
+  grid.innerHTML = items.map(p => `
+    <div class="product-card" onclick="openModal(${p.id})">
+      <div class="product-img-wrap">
+        <div class="product-img-inner">${p.emoji}</div>
+        ${p.badge ? `<div class="product-badge">${p.badge}</div>` : ''}
+      </div>
+      <div class="product-info">
+        <div class="product-name">${p.name}</div>
+        <div class="product-price">
+          ${p.sale
+            ? `<span class="orig">€${p.price}</span><span class="sale">€${p.sale}</span>`
+            : `€${p.price}`}
+        </div>
+        <button class="product-add" onclick="event.stopPropagation(); quickAdd(${p.id})">Quick Add</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+renderProducts('featured-grid', products.slice(0,4));
+renderProducts('shop-grid', products);
+
+// =====================
+// PAGE NAVIGATION
+// =====================
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  const navEl = document.getElementById('nav-' + page);
+  if(navEl) navEl.classList.add('active');
+  window.scrollTo(0,0);
+  if(page === 'basket') renderBasket();
+  if(page === 'checkout') renderCheckout();
+}
+
+// =====================
+// THEME TOGGLE
+// =====================
+function toggleTheme() {
+  const body = document.body;
+  const isDark = body.getAttribute('data-theme') === 'dark';
+  body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+}
+
+// =====================
+// MODAL
+// =====================
+function openModal(id) {
+  const p = products.find(x => x.id === id);
+  currentProduct = p;
+  selectedSize = 'S';
+  selectedColor = p.colors[0];
+  document.getElementById('modal-img').textContent = p.emoji;
+  document.getElementById('modal-name').textContent = p.name;
+  document.getElementById('modal-cat').textContent = p.cat.toUpperCase();
+  document.getElementById('modal-price').textContent = p.sale ? `€${p.sale}` : `€${p.price}`;
+  document.getElementById('modal-desc').textContent = p.desc;
+  const colorGrid = document.getElementById('modal-colors');
+  colorGrid.innerHTML = p.colors.map((c,i) => `
+    <div class="color-swatch ${i===0?'active':''}" style="background:${c}; border-color:${c==='#fff'?'#ddd':c};"
+      onclick="selectColor(this,'${c}')"></div>
+  `).join('');
+  document.getElementById('product-modal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(e) {
+  if(e.target === document.getElementById('product-modal')) closeModalDirect();
+}
+function closeModalDirect() {
+  document.getElementById('product-modal').classList.remove('open');
+  document.body.style.overflow='';
+}
+function selectSize(btn) {
+  document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedSize = btn.textContent;
+}
+function selectColor(el, color) {
+  document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  selectedColor = color;
+}
+function addCurrentToBasket() {
+  if(!currentProduct) return;
+  addToBasket(currentProduct, selectedSize, selectedColor);
+  closeModalDirect();
+  showToast(`${currentProduct.name} added to basket`);
+}
+function quickAdd(id) {
+  const p = products.find(x => x.id === id);
+  addToBasket(p, 'M', p.colors[0]);
+  showToast(`${p.name} added to basket`);
+}
+
+// =====================
+// BASKET LOGIC
+// =====================
+function addToBasket(product, size, color) {
+  const price = product.sale || product.price;
+  const existing = basket.find(i => i.id === product.id && i.size === size && i.color === color);
+  if(existing) { existing.qty++; }
+  else { basket.push({ id:product.id, name:product.name, emoji:product.emoji, price, size, color, qty:1 }); }
+  updateBasketCount();
+}
+function updateBasketCount() {
+  const total = basket.reduce((s,i) => s+i.qty, 0);
+  document.getElementById('basket-count').textContent = total;
+}
+function renderBasket() {
+  const container = document.getElementById('basket-items');
+  const promo = document.getElementById('promo-section');
+  const summary = document.getElementById('basket-summary');
+  if(basket.length === 0) {
+    container.innerHTML = `
+      <div class="empty-basket">
+        <h2>Your basket is empty</h2>
+        <p>Looks like you haven't added anything yet.</p>
+        <button class="hero-cta" onclick="showPage('shop')" style="margin:0 auto;">Browse Collection</button>
+      </div>`;
+    promo.style.display = 'none';
+    summary.style.display = 'none';
+    return;
+  }
+  container.innerHTML = basket.map((item, idx) => `
+    <div class="basket-item">
+      <div class="basket-item-img">${item.emoji}</div>
+      <div>
+        <div class="basket-item-name">${item.name}</div>
+        <div class="basket-item-meta">Size: ${item.size} &nbsp;|&nbsp; Color: <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${item.color};vertical-align:middle;border:1px solid rgba(0,0,0,0.15);"></span></div>
+        <div class="qty-control">
+          <button class="qty-btn" onclick="changeQty(${idx},-1)">−</button>
+          <span class="qty-val">${item.qty}</span>
+          <button class="qty-btn" onclick="changeQty(${idx},1)">+</button>
+        </div>
+        <button class="remove-btn" onclick="removeItem(${idx})">Remove</button>
+      </div>
+      <div class="item-price">€${(item.price * item.qty).toFixed(2)}</div>
+    </div>
+  `).join('');
+  promo.style.display = 'block';
+  summary.style.display = 'block';
+  updateSummary();
+}
+function changeQty(idx, delta) {
+  basket[idx].qty = Math.max(1, basket[idx].qty + delta);
+  updateBasketCount();
+  renderBasket();
+}
+function removeItem(idx) {
+  basket.splice(idx, 1);
+  updateBasketCount();
+  renderBasket();
+}
+function getSubtotal() {
+  return basket.reduce((s,i) => s + i.price * i.qty, 0);
+}
+function updateSummary() {
+  let sub = getSubtotal();
+  let discount = discountApplied ? sub * 0.1 : 0;
+  let shipping = deliveryCost;
+  let afterDiscount = sub - discount + shipping;
+  let vat = afterDiscount * 0.2;
+  let total = afterDiscount + vat;
+
+  document.getElementById('sum-subtotal').textContent = `€${sub.toFixed(2)}`;
+  if(discountApplied) {
+    document.getElementById('sum-discount-row').style.display = 'flex';
+    document.getElementById('sum-discount').textContent = `-€${discount.toFixed(2)}`;
+  }
+  document.getElementById('sum-shipping').textContent = shipping === 0 ? 'Free' : `€${shipping.toFixed(2)}`;
+  document.getElementById('sum-vat').textContent = `€${vat.toFixed(2)}`;
+  document.getElementById('sum-total').textContent = `€${total.toFixed(2)}`;
+}
+function applyPromo() {
+  const val = document.getElementById('promo-input').value.trim().toUpperCase();
+  const msg = document.getElementById('promo-msg');
+  if(val === 'NOVA10') {
+    discountApplied = true;
+    msg.style.color = '#2ebd7a';
+    msg.textContent = '✓ 10% discount applied';
+    renderBasket();
+  } else {
+    msg.style.color = '#e05c5c';
+    msg.textContent = '✗ Invalid code';
+  }
+}
+function startCheckout() {
+  if(basket.length === 0) return;
+  currentCheckoutStep = 1;
+  showPage('checkout');
+  renderCheckout();
+}
+
+// =====================
+// CHECKOUT
+// =====================
+function renderCheckout() {
+  updateStepIndicator(currentCheckoutStep);
+  for(let i=1;i<=4;i++) {
+    document.getElementById(`checkout-step-${i}`).style.display = i===currentCheckoutStep ? 'block' : 'none';
+  }
+  // Fill summary sidebar
+  const items = basket.map(i => `<div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span>${i.name} (${i.size}) x${i.qty}</span><span>€${(i.price*i.qty).toFixed(2)}</span></div>`).join('');
+  document.getElementById('checkout-summary-items').innerHTML = items;
+  let sub = getSubtotal();
+  let discount = discountApplied ? sub * 0.1 : 0;
+  let afterDiscount = sub - discount + deliveryCost;
+  let vat = afterDiscount * 0.2;
+  let total = afterDiscount + vat;
+  document.getElementById('co-subtotal').textContent = `€${sub.toFixed(2)}`;
+  if(discountApplied) {
+    document.getElementById('co-discount-row').style.display = 'flex';
+    document.getElementById('co-discount').textContent = `-€${discount.toFixed(2)}`;
+  }
+  document.getElementById('co-shipping').textContent = deliveryCost === 0 ? 'Free' : `€${deliveryCost.toFixed(2)}`;
+  document.getElementById('co-vat').textContent = `€${vat.toFixed(2)}`;
+  document.getElementById('co-total').textContent = `€${total.toFixed(2)}`;
+  document.getElementById('co-delivery').textContent = `Estimated delivery: ${deliveryEst}`;
+  if(currentCheckoutStep === 4) fillReviewStep();
+}
+function updateStepIndicator(step) {
+  for(let i=1;i<=4;i++) {
+    const el = document.getElementById(`step-${i}`);
+    el.classList.remove('active','done');
+    if(i < step) el.classList.add('done');
+    if(i === step) el.classList.add('active');
+  }
+}
+function goToStep(n) {
+  currentCheckoutStep = n;
+  renderCheckout();
+  window.scrollTo(0,0);
+}
+function selectDelivery(el, method, cost) {
+  document.querySelectorAll('.delivery-option').forEach(o => {
+    o.classList.remove('selected');
+    o.querySelector('input').checked = false;
+  });
+  el.classList.add('selected');
+  el.querySelector('input').checked = true;
+  deliveryCost = cost;
+  deliveryMethod = method === 'standard' ? 'Standard (3-5 days)' : method === 'express' ? 'Express (1-2 days)' : 'Click & Collect';
+  deliveryEst = method === 'express' ? '1-2 business days' : method === 'collect' ? 'Ready in 2 hours' : '3-5 business days';
+  renderCheckout();
+}
+function selectPayment(el) {
+  document.querySelectorAll('.payment-option').forEach(o => {
+    o.classList.remove('selected');
+    o.querySelector('input').checked = false;
+  });
+  el.classList.add('selected');
+  el.querySelector('input').checked = true;
+  const isCard = el.querySelectorAll('.payment-name')[0]?.textContent.includes('Card');
+  document.getElementById('card-fields').style.display = isCard ? 'grid' : 'none';
+}
+function fillReviewStep() {
+  const fn = document.getElementById('fn').value || 'Emma';
+  const ln = document.getElementById('ln').value || 'Müller';
+  const addr1 = document.getElementById('addr1').value || 'Königsallee 14';
+  const city = document.getElementById('city').value || 'Düsseldorf';
+  const postcode = document.getElementById('postcode').value || '40212';
+  const country = document.getElementById('country').value || 'Germany';
+  document.getElementById('review-address').innerHTML = `${fn} ${ln}<br>${addr1}<br>${postcode} ${city}<br>${country}`;
+  document.getElementById('review-items-list').innerHTML = basket.map(i => `
+    <div class="review-item">
+      <div class="review-item-img">${i.emoji}</div>
+      <div class="review-item-info">
+        <div class="review-item-name">${i.name}</div>
+        <div class="review-item-meta">Size: ${i.size} — Qty: ${i.qty}</div>
+      </div>
+      <div class="review-item-price">€${(i.price*i.qty).toFixed(2)}</div>
+    </div>
+  `).join('');
+}
+function placeOrder() {
+  const terms = document.getElementById('terms-check').checked;
+  if(!terms) { showToast('Please accept the Terms & Conditions to continue.'); return; }
+  const orderNum = '#TN-2026-' + String(Math.floor(Math.random()*9000)+1000);
+  // Fill confirmation
+  document.getElementById('conf-order-num').textContent = orderNum;
+  const fn = document.getElementById('fn').value || 'Emma';
+  const ln = document.getElementById('ln').value || 'Müller';
+  const addr1 = document.getElementById('addr1').value || 'Königsallee 14';
+  const city = document.getElementById('city').value || 'Düsseldorf';
+  const postcode = document.getElementById('postcode').value || '40212';
+  const country = document.getElementById('country').value || 'Germany';
+  document.getElementById('conf-address').innerHTML = `${fn} ${ln}, ${addr1}, ${postcode} ${city}, ${country}`;
+  document.getElementById('conf-method').textContent = deliveryMethod;
+  document.getElementById('conf-est').textContent = deliveryEst;
+  let sub = getSubtotal();
+  let discount = discountApplied ? sub*0.1 : 0;
+  let vat = (sub-discount+deliveryCost)*0.2;
+  let total = sub - discount + deliveryCost + vat;
+  document.getElementById('conf-items').innerHTML = basket.map(i => `
+    <div class="conf-row">
+      <span class="conf-label">${i.emoji} ${i.name} x${i.qty} (${i.size})</span>
+      <span>€${(i.price*i.qty).toFixed(2)}</span>
+    </div>
+  `).join('') + `
+    <div class="conf-row"><span class="conf-label">VAT (20%)</span><span>€${vat.toFixed(2)}</span></div>
+    <div class="conf-row" style="font-weight:600;"><span>Total</span><span>€${total.toFixed(2)}</span></div>
+  `;
+  basket = [];
+  updateBasketCount();
+  showPage('confirmation');
+}
+
+// =====================
+// COOKIES
+// =====================
+function acceptCookies() {
+  document.getElementById('cookie-banner').classList.add('hidden');
+}
+
+// =====================
+// TOAST
+// =====================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// Init
+setTimeout(() => {
+  document.getElementById('cookie-banner').style.display = 'flex';
+}, 1200);
+</script>
+</body>
+</html>
